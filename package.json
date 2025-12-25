@@ -2,7 +2,7 @@
   "name": "email-llm",
   "displayName": "Email llm",
   "version": "0.0.1",
-  "description": "A basic Plasmo extension.",
+  "description": "An extention to allow you to use llm's (especially locally hosted ones!) natively within any web email client",
   "author": "Phoenix Sheppard",
   "scripts": {
     "dev": "plasmo dev",
