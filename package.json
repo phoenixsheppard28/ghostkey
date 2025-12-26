@@ -33,6 +33,15 @@
     ],
     "permissions": [
       "tabs"
-    ]
+    ],
+    "commands": {
+      "open-popup": {
+        "suggested_key": {
+          "default": "Ctrl+Shift+P",
+          "mac": "Command+Shift+P"
+        },
+        "description": "Open Inline popup input"
+      }
+    }
   }
 }

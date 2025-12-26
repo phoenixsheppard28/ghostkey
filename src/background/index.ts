@@ -2,16 +2,28 @@
   use the messaging api to make requests to the background, which will call the llm and send data back
   
 */
-export {} 
+export {}
 console.log(
-    "Live now; make now always the most precious time. Now will never come again."
+  "Live now; make now always the most precious time. Now will never come again."
 )
 
 chrome.action.onClicked.addListener(async (tab) => {
-    await chrome.sidePanel.open({
-      windowId: tab.windowId
-    })
+  await chrome.sidePanel.open({
+    windowId: tab.windowId
   })
+})
+
+chrome.commands.onCommand.addListener((command) => { 
+  if (command === "open-popup") {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      chrome.tabs.sendMessage(tabs[0].id!, { type: "OPEN_INLINE_POPUP" }) 
+      // * send the open_inline_popup msg to content (current page)
+    })
+  }
+})
+
+
+
 
 
 
@@ -23,8 +35,8 @@ todo revisit this, check out what the apollo extention does in email,
 // This code listens for commands defined in the extension's manifest (like keyboard shortcuts).
 // When the "cmd-dot" command is triggered (e.g., via a keyboard shortcut), it attempts to open the side panel in the current browser window.
 // However, there's a bug: `tab` is not defined in this function's scope, so `tab.windowId` will cause an error.
-// To fix this, we'll need to determine which window to target. 
-// Since `onCommand` provides only the command string (and not a tab or window), 
+// To fix this, we'll need to determine which window to target.
+// Since `onCommand` provides only the command string (and not a tab or window),
 // we can get the currently active tab to obtain its windowId.
 
 // chrome.commands.onCommand.addListener(async (command) => {
@@ -38,4 +50,3 @@ todo revisit this, check out what the apollo extention does in email,
 //         }
 //     }
 // })
-

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useStorage } from "@plasmohq/storage/hook"
-import type { LLMConfig } from "~lib/llm"
-import { defaultConfig } from "~lib/llm"
+import type { LLMConfig } from "~lib/models/llm"
+import { defaultConfig } from "~lib/models/llm"
 import {
   TextInput,
   PasswordInput,
