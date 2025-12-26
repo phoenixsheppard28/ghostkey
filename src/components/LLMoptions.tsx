@@ -1,0 +1,117 @@
+import { useEffect, useState } from "react"
+import { useStorage } from "@plasmohq/storage/hook"
+import type { LLMConfig } from "~lib/llm"
+import { defaultConfig } from "~lib/llm"
+import {
+  TextInput,
+  PasswordInput,
+  Button,
+  Group,
+  Box,
+  Title,
+  Notification,
+  Stack,
+} from "@mantine/core"
+import { isValidLocalUrl } from "~lib/text"
+
+export default function LLMOptionsComponent() {
+  const [config, setConfig] = useStorage<LLMConfig>("llm_config", defaultConfig)
+  const [localState, setLocalState] = useState<LLMConfig>(config)
+  const [submitted, setSubmitted] = useState<{ [K in keyof LLMConfig]?: boolean }>({})
+  const [error, setError] = useState<{ [K in keyof LLMConfig]?: string }>({})
+
+  useEffect(() => {
+    setLocalState(config)
+  }, [config])
+
+  const handleChange = (key: keyof LLMConfig, value: string) => {
+    setLocalState(prev => ({ ...prev, [key]: value }))
+    setError(prev => ({ ...prev, [key]: undefined })) // clear error on edit
+  }
+
+  const handleSubmit = (key: keyof LLMConfig) => {
+    // For localLLMUrl, check format
+    if (key === "localLLMUrl") {
+      if (
+        localState.localLLMUrl.trim() !== "" &&
+        !isValidLocalUrl(localState.localLLMUrl.trim())
+      ) {
+        setError(prev => ({
+          ...prev,
+          localLLMUrl: "Please enter a valid localhost or 127.0.0.1 URL."
+        }))
+        return
+      }
+    }
+    setConfig(prev => ({
+      ...prev,
+      [key]: localState[key]
+    }))
+    setSubmitted(prev => ({ ...prev, [key]: true }))
+    setTimeout(() => {
+      setSubmitted(prev => ({ ...prev, [key]: false }))
+    }, 2000)
+  }
+
+  return (
+    <Box maw={500} mx="auto">
+      <Title order={2} mb="md">
+        Options
+      </Title>
+      <Stack gap="md">
+        <Group align="flex-end">
+          <TextInput
+            label="Local LLM URL"
+            type="url"
+            value={localState.localLLMUrl}
+            onChange={e => handleChange("localLLMUrl", e.target.value)}
+            placeholder="http://localhost:11434"
+            error={error.localLLMUrl}
+            style={{ flex: 1 }}
+            autoComplete="off"
+          />
+          <Button onClick={() => handleSubmit("localLLMUrl")}>Submit</Button>
+        </Group>
+        {submitted.localLLMUrl && (
+          <Notification color="green" withCloseButton={false} mt={-15}>
+            Submitted!
+          </Notification>
+        )}
+        <Group align="flex-end">
+          <PasswordInput
+            label="OpenAI API Key"
+            value={localState.openAIKey}
+            onChange={e => handleChange("openAIKey", e.target.value)}
+            placeholder="sk-..."
+            autoComplete="off"
+            style={{ flex: 1 }}
+            error={error.openAIKey}
+          />
+          <Button onClick={() => handleSubmit("openAIKey")}>Submit</Button>
+        </Group>
+        {submitted.openAIKey && (
+          <Notification color="green" withCloseButton={false} mt={-15}>
+            Submitted!
+          </Notification>
+        )}
+        <Group align="flex-end">
+          <PasswordInput
+            label="Claude API Key"
+            value={localState.claudeKey}
+            onChange={e => handleChange("claudeKey", e.target.value)}
+            placeholder="claude-key"
+            autoComplete="off"
+            style={{ flex: 1 }}
+            error={error.claudeKey}
+          />
+          <Button onClick={() => handleSubmit("claudeKey")}>Submit</Button>
+        </Group>
+        {submitted.claudeKey && (
+          <Notification color="green" withCloseButton={false} mt={-15}>
+            Submitted!
+          </Notification>
+        )}
+      </Stack>
+    </Box>
+  )
+}

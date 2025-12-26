@@ -1,13 +1,17 @@
-import React from "react"
+  import React from "react"
 import { useState } from "react"
 import { useEffect } from "react"
+import  { useStorage } from "@plasmohq/storage/hook" // for chat 
+
 
 function Sidebar() {
-  
+
+  // will need to load chat history that was stored in storage before we load the chat 
+  // todo, draw out the damn architecture diagram 
  return (
     <div
     style={{
-      display: "flex",
+    display: "flex",
       flexDirection: "column",
       padding: 0
     }}>

@@ -1,4 +1,8 @@
-export {}
+/*
+  use the messaging api to make requests to the background, which will call the llm and send data back
+  
+*/
+export {} 
 console.log(
     "Live now; make now always the most precious time. Now will never come again."
 )
