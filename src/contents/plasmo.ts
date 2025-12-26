@@ -1,8 +1,6 @@
 import type { PlasmoCSConfig } from "plasmo"
-
-import { isEditable } from "~lib/text"
-import { registerFocusTracker } from "./focusTracker"
-import { registerRuntimeMessages } from "./runtimeMessages"
+import { registerFocusTracker } from "../lib/content_helpers/focusTracker"
+import { registerRuntimeMessages } from "../lib/content_helpers/runtimeMessages"
 
 export const config: PlasmoCSConfig = {
   matches: ["<all_urls>"],
