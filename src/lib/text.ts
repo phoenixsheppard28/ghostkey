@@ -9,7 +9,6 @@ export function isEditable(el: HTMLElement | null): boolean {
   if (el instanceof HTMLTextAreaElement) return true
 
   if (el.isContentEditable) return true
-
   return false
 }
 
