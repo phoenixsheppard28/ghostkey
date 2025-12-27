@@ -13,8 +13,9 @@ import {
   Stack,
 } from "@mantine/core"
 import { isValidLocalUrl } from "~lib/text"
+import type { JSX } from "react"
 
-export default function LLMOptionsComponent() {
+export default function LLMOptionsComponent(): JSX.Element {
   const [config, setConfig] = useStorage<LLMConfig>("llm_config", defaultConfig)
   const [localState, setLocalState] = useState<LLMConfig>(config)
   const [submitted, setSubmitted] = useState<{ [K in keyof LLMConfig]?: boolean }>({})
@@ -64,7 +65,7 @@ export default function LLMOptionsComponent() {
             label="Local LLM URL"
             type="url"
             value={localState.localLLMUrl}
-            onChange={e => handleChange("localLLMUrl", e.target.value)}
+            onChange={(e:React.ChangeEvent<HTMLInputElement>) => handleChange("localLLMUrl", e.target.value)}
             placeholder="http://localhost:11434"
             error={error.localLLMUrl}
             style={{ flex: 1 }}
@@ -81,7 +82,7 @@ export default function LLMOptionsComponent() {
           <PasswordInput
             label="OpenAI API Key"
             value={localState.openAIKey}
-            onChange={e => handleChange("openAIKey", e.target.value)}
+            onChange={(e:React.ChangeEvent<HTMLInputElement>)  => handleChange("openAIKey", e.target.value)}
             placeholder="sk-..."
             autoComplete="off"
             style={{ flex: 1 }}
@@ -98,7 +99,7 @@ export default function LLMOptionsComponent() {
           <PasswordInput
             label="Claude API Key"
             value={localState.claudeKey}
-            onChange={e => handleChange("claudeKey", e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange("claudeKey", e.target.value)}
             placeholder="claude-key"
             autoComplete="off"
             style={{ flex: 1 }}

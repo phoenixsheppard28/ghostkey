@@ -1,3 +1,4 @@
+import type { JSX } from "react"
 import { ActionIcon, Box, Group, Popover, TextInput } from "@mantine/core"
 import { useState } from "react"
 import { FiX } from "react-icons/fi"
@@ -8,15 +9,15 @@ export default function InlinePopup({
 }: {
   onClose: () => void
   onSubmit?: (value: string) => void
-}) {
+}): JSX.Element {
   const [value, setValue] = useState("")
   const [opened, setOpened] = useState(true)
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setValue(event.target.value)
   }
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = (event: React.FormEvent):void => {
     event.preventDefault()
     if (onSubmit) {
       onSubmit(value)
@@ -24,7 +25,7 @@ export default function InlinePopup({
     handleClose()
   }
 
-  const handleClose = () => {
+  const handleClose = ():void => {
     setOpened(false)
     onClose()
   }

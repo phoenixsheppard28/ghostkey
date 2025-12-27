@@ -7,15 +7,15 @@ console.log(
   "Live now; make now always the most precious time. Now will never come again."
 )
 
-chrome.action.onClicked.addListener(async (tab) => {
+chrome.action.onClicked.addListener(async (tab: chrome.tabs.Tab) => {
   await chrome.sidePanel.open({
     windowId: tab.windowId
   })
 })
 
-chrome.commands.onCommand.addListener((command) => { 
+chrome.commands.onCommand.addListener((command: string) => { 
   if (command === "open-popup") {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs:chrome.tabs.Tab[]) => {
       chrome.tabs.sendMessage(tabs[0].id!, { type: "OPEN_INLINE_POPUP" }) 
       // * send the open_inline_popup msg to content (current page)
     })
