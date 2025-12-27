@@ -1,9 +1,12 @@
-let activeEditable: HTMLElement | null = null
 
-export function setActiveEditable(el: HTMLElement | null) {
-  activeEditable = el
-}
+export class ActiveEditable {
+  private static active: HTMLElement | null = null
 
-export function getActiveEditable(): HTMLElement | null {
-  return activeEditable
+  static setActiveEditable(el:HTMLElement| null): void {
+    this.active = el
+  }
+
+  static getActiveEditable(): HTMLElement | null{
+    return this.active
+  }
 }

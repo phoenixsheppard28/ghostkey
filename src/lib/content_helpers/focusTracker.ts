@@ -1,12 +1,12 @@
-import { setActiveEditable } from "~lib/actives/activeEditable"
+import { ActiveEditable } from "~lib/actives/activeEditable"
 import { isEditable } from "~lib/text"
 
-export function registerFocusTracker() {
-  document.addEventListener("focusin", (e) => {
+export function registerFocusTracker(): void {
+  document.addEventListener("focusin", (e: FocusEvent) => {
     let el = e.target
 
     if (!(el instanceof HTMLElement)) {
-      setActiveEditable(null)
+      ActiveEditable.setActiveEditable(null)
       return
     }
 
@@ -14,6 +14,6 @@ export function registerFocusTracker() {
       el = el.closest('[contenteditable="true"]')
     }
 
-    setActiveEditable(el instanceof HTMLElement && isEditable(el) ? el : null)
+    ActiveEditable.setActiveEditable(el instanceof HTMLElement && isEditable(el) ? el : null)
   })
 }
