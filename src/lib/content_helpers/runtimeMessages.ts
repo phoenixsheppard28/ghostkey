@@ -1,9 +1,10 @@
-import { getActiveEditable } from "~lib/activeEditable"
+import { ActiveEditable } from "~lib/actives/activeEditable"
 import { openInlinePopup } from "~lib/content_helpers/openInlinePopup"
-export function registerRuntimeMessages() {
-  chrome.runtime.onMessage.addListener((msg) => {
+
+export function registerRuntimeMessages(): void {
+  chrome.runtime.onMessage.addListener((msg: MessageEvent) => {
     if (msg.type === "OPEN_INLINE_POPUP") {
-      const activeEditable = getActiveEditable()
+      const activeEditable = ActiveEditable.getActiveEditable()
       if (activeEditable) {
         openInlinePopup(activeEditable)
       }
