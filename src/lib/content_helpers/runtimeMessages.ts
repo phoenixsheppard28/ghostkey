@@ -1,4 +1,4 @@
-import { getActiveEditable } from "~lib/activeEditable"
+import { getActiveEditable } from "~lib/actives/activeEditable"
 import { openInlinePopup } from "~lib/content_helpers/openInlinePopup"
 export function registerRuntimeMessages() {
   chrome.runtime.onMessage.addListener((msg) => {

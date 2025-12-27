@@ -1,4 +1,4 @@
-import { setActiveEditable } from "~lib/activeEditable"
+import { setActiveEditable } from "~lib/actives/activeEditable"
 import { isEditable } from "~lib/text"
 
 export function registerFocusTracker() {
