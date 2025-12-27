@@ -1,15 +1,16 @@
+import { ActionIcon, Box, Group, Popover, TextInput } from "@mantine/core"
 import { useState } from "react"
-import { TextInput, ActionIcon, Group } from "@mantine/core"
 import { FiX } from "react-icons/fi"
 
 export default function InlinePopup({
   onClose,
-  onSubmit,
+  onSubmit
 }: {
   onClose: () => void
   onSubmit?: (value: string) => void
 }) {
   const [value, setValue] = useState("")
+  const [opened, setOpened] = useState(true)
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value)
@@ -20,28 +21,48 @@ export default function InlinePopup({
     if (onSubmit) {
       onSubmit(value)
     }
+    handleClose()
+  }
+
+  const handleClose = () => {
+    setOpened(false)
     onClose()
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ minWidth: 280, maxWidth: 400 }}>
-      <Group align="flex-start">
-        <TextInput
-          autoFocus
-          placeholder="Describe your changes..."
-          value={value}
-          onChange={handleInputChange}
-          style={{ flex: 1 }}
-        />
-        <ActionIcon
-          onClick={onClose}
-          aria-label="Close popup"
-          size="lg"
-          variant="subtle"
-        >
-          <FiX size={18} />
-        </ActionIcon>
-      </Group>
-    </form>
+    <Popover
+      opened={opened}
+      onClose={handleClose}
+      position="bottom-start"
+      shadow="md"
+      withinPortal={false}>
+      <Popover.Target>
+        <Box style={{ width: 1, height: 1 }} />
+      </Popover.Target>
+      <Popover.Dropdown
+        onClick={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
+        onKeyDown={(e) => e.stopPropagation()}
+      >
+        <form onSubmit={handleSubmit} style={{ minWidth: 280, maxWidth: 400 }}>
+          <Group align="flex-start">
+            <TextInput
+              autoFocus
+              placeholder="Describe your changes..."
+              value={value}
+              onChange={handleInputChange}
+              style={{ flex: 1 }}
+            />
+            <ActionIcon
+              onClick={handleClose}
+              aria-label="Close popup"
+              size="lg"
+              variant="subtle">
+              <FiX size={18} />
+            </ActionIcon>
+          </Group>
+        </form>
+      </Popover.Dropdown>
+    </Popover>
   )
 }
