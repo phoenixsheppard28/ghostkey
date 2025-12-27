@@ -40,9 +40,9 @@ export default function InlinePopup({
         <Box style={{ width: 1, height: 1 }} />
       </Popover.Target>
       <Popover.Dropdown
-        onClick={(e) => e.stopPropagation()}
-        onMouseDown={(e) => e.stopPropagation()}
-        onKeyDown={(e) => e.stopPropagation()}
+        onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
+        onMouseDown={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
+        onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => e.stopPropagation()}
       >
         <form onSubmit={handleSubmit} style={{ minWidth: 280, maxWidth: 400 }}>
           <Group align="flex-start">
