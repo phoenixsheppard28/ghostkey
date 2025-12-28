@@ -9,7 +9,7 @@ export interface PopupInstance {
 export class ActivePopup {
   private static instance: PopupInstance | null = null
 
-  static set(popup: PopupInstance | null):void  {
+  static set(popup: PopupInstance | null): void {
     this.instance = popup
   }
 
@@ -18,12 +18,21 @@ export class ActivePopup {
   }
 
   static focus(): void {
-    if (this.instance) {
-      const input = this.instance.shadowRoot.querySelector("input")
-      if (input) {
-        input.focus()
-      }
+    if (!this.instance) {
+      return
     }
+    const input = this.instance.shadowRoot.querySelector("input")
+    if (!input) { // scroll it back into view if its not found (meaning we scrolled away from it) ? do we want?
+      setTimeout(() => {
+        this.instance.container.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+          inline: "nearest"
+        })
+      }, 0)
+    }
+
+    input.focus()
   }
 
   static exists(): boolean {
