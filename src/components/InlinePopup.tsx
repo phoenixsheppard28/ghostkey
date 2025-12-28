@@ -1,6 +1,6 @@
 import type { JSX } from "react"
 import { ActionIcon, Box, Group, Popover, TextInput } from "@mantine/core"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { FiX } from "react-icons/fi"
 
 export default function InlinePopup({
@@ -11,7 +11,18 @@ export default function InlinePopup({
   onSubmit?: (value: string) => void
 }): JSX.Element {
   const [value, setValue] = useState("")
-  const [opened, setOpened] = useState(true)
+
+  useEffect(() => { // add the escape handler to the page 
+    const handleKeyDown = (e: KeyboardEvent): void => {
+      if (e.key === "Escape") {
+        onClose()
+      }
+    }
+    document.addEventListener("keydown", handleKeyDown)
+    return (): void => document.removeEventListener("keydown", handleKeyDown)
+  }, [onClose])
+
+  
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setValue(event.target.value)
@@ -22,18 +33,13 @@ export default function InlinePopup({
     if (onSubmit) {
       onSubmit(value)
     }
-    handleClose()
-  }
-
-  const handleClose = ():void => {
-    setOpened(false)
     onClose()
   }
 
   return (
     <Popover
-      opened={opened}
-      onClose={handleClose}
+      opened={true}
+      onClose={onClose}
       position="bottom-start"
       shadow="md"
       withinPortal={false}>
@@ -43,7 +49,12 @@ export default function InlinePopup({
       <Popover.Dropdown
         onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
         onMouseDown={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
-        onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => e.stopPropagation()}
+        onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) =>  { // handler inside the actual element
+          if (e.key === "Escape") {
+            onClose()
+          }
+          e.stopPropagation()
+        }}
       >
         <form onSubmit={handleSubmit} style={{ minWidth: 280, maxWidth: 400 }}>
           <Group align="flex-start">
@@ -55,7 +66,7 @@ export default function InlinePopup({
               style={{ flex: 1 }}
             />
             <ActionIcon
-              onClick={handleClose}
+              onClick={onClose}
               aria-label="Close popup"
               size="lg"
               variant="subtle">

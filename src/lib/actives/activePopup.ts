@@ -1,14 +1,15 @@
 import type { Root } from "react-dom/client"
 
-export interface PopupInstance {
+interface PopupInstance {
   container: HTMLElement
   shadowRoot: ShadowRoot
   root: Root
 }
 
+
 export class ActivePopup {
   private static instance: PopupInstance | null = null
-
+ 
   static set(popup: PopupInstance | null): void {
     this.instance = popup
   }

@@ -16,6 +16,9 @@ export function registerRuntimeMessages(): void {
         // maybe othrer logic here to control k come back
         openInlinePopup(activeEditable)
       }
+      else{
+        console.log("none detected")
+      }
     }
   })
 }
