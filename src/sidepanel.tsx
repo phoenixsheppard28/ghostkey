@@ -1,23 +1,29 @@
-import "~style.css"
 import React from "react"
 import { useState } from "react"
 import { useEffect } from "react"
-import  { useStorage } from "@plasmohq/storage/hook" // for chat 
 import { FaGear } from "react-icons/fa6";
-import { FaArrowLeft } from "react-icons/fa6";
 import { MantineProvider } from "@mantine/core"
+import { GRAPE_MANTINE_THEME } from "~styles/MantineStyles"
+import type { JSX } from "react";
 
 
-
-function Sidebar() {
+export default function Sidebar(): JSX.Element {
 
   // will need to load chat history that was stored in storage before we load the chat 
   // todo, draw out the damn architecture diagram 
-  const options_url = chrome.runtime.getURL("options.html")
-  const original_side_panael_url = chrome.runtime.getURL("sidepanel.html")
+  const [optionsUrl, setOptionsUrl] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!chrome?.runtime?.id) return
+    setOptionsUrl(chrome.runtime.getURL("options.html"))
+  }, []) // dont know if its seccesary but we keep it anyways
+    
+
+
+  // const original_side_panael_url = chrome.runtime.getURL("sidepanel.html")
 
  return (
-  <MantineProvider>
+  <MantineProvider theme={GRAPE_MANTINE_THEME}>
     <div
     style={{
     display: "flex",
@@ -25,7 +31,7 @@ function Sidebar() {
       padding: 0
     }}>
       <div className="settings-icon">
-        <a href={options_url} target="_blank"> 
+        <a href={optionsUrl} target="_blank"> 
           <FaGear />
         </a>
       </div>
@@ -44,5 +50,3 @@ function Sidebar() {
   </MantineProvider>
  )
 }
-
-export default Sidebar

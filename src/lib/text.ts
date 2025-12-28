@@ -9,15 +9,27 @@ export function isEditable(el: HTMLElement | null): boolean {
   if (el instanceof HTMLTextAreaElement) return true
 
   if (el.isContentEditable) return true
+
+  // Check for ARIA roles that indicate editability (covers canvas-based editors like Google Docs)
+  if (
+    el.closest('[role="textbox"], [role="document"], [contenteditable="true"]')
+  )
+    return true
+
+  if (el.querySelector?.('[contenteditable="true"], [role="textbox"]')) {
+    return true
+  }
+  if (el.closest(".kix-page, .kix-page-paginated, .kix-appview-editor")) {
+    return true
+  }
   return false
 }
-
 
 export function isValidUrl(url: string): boolean {
   try {
     new URL(url)
     return true
-  } catch (e) {
+  } catch {
     return false
   }
 }

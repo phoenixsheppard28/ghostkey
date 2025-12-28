@@ -38,4 +38,6 @@ keys.json
 # typescript
 .tsbuildinfo
 
+# other stuff for project management
+notes.md
 todo.txt

@@ -1,22 +1,18 @@
 import { MantineProvider } from "@mantine/core"
 import mantineCss from "bundle-text:@mantine/core/styles.css"
 import { createRoot } from "react-dom/client"
-
+import { GRAPE_MANTINE_THEME, } from "~styles/MantineStyles"
 import InlinePopup from "~components/InlinePopup"
 import { ActivePopup } from "~lib/actives/activePopup"
+import { sendToBackground, type PlasmoMessaging } from "@plasmohq/messaging"
 
 export function openInlinePopup(activeEditable: HTMLElement): void {
-  // If popup already exists, focus it and return
-  if (ActivePopup.exists()) {
-    ActivePopup.focus()
-    return
-  }
 
   console.log("detected")
 
   const container = document.createElement("div")
   container.style.position = "relative"
-  container.style.zIndex = "99999999"
+  container.style.zIndex = "99999999" // this ish is hackey
 
   const shadowRoot = container.attachShadow({ mode: "open" })
 
@@ -30,7 +26,7 @@ export function openInlinePopup(activeEditable: HTMLElement): void {
   shadowRoot.appendChild(reactContainer)
 
   // Insert the container into the DOM
-  activeEditable.insertAdjacentElement("beforebegin", container)
+  activeEditable.insertAdjacentElement("beforebegin", container) // ! afterend or beforebegin change placing alot
 
   // Create React root and render
   const root = createRoot(reactContainer)
@@ -44,16 +40,23 @@ export function openInlinePopup(activeEditable: HTMLElement): void {
     ActivePopup.set(null)
   }
 
-  const handleSubmit = (value: string): void => {
+  const handleSubmit = async (value: string): Promise<void> => {
     console.log("Submitted:", value)
     // TODO: Hook up to LLM here
+    const resp: PlasmoMessaging.Response = await sendToBackground({
+      name: "queryLLM"
+    })
+    console.log(resp)
   }
 
   root.render(
-    <MantineProvider // need this to inject styles into shadow dom
+    <MantineProvider
       getRootElement={() => reactContainer}
-      cssVariablesSelector="#inline-popup-root">
+      cssVariablesSelector="#inline-popup-root"
+      theme={GRAPE_MANTINE_THEME}
+    >
       <InlinePopup onClose={handleClose} onSubmit={handleSubmit} />
     </MantineProvider>
   )
+
 }
