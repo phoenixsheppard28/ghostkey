@@ -77,6 +77,7 @@ export default function InlinePopup({
               onFocus={() => {
                 shouldReclaimFocusRef.current = true
               }} // this and onBlur fix youtube focus stealing
+              // however it doesnent let u lcick off
               onBlur={(): void => {
                 if (shouldReclaimFocusRef.current) {
                   setTimeout(() => inputRef.current?.focus(), 0)
