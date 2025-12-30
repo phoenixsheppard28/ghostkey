@@ -10,51 +10,64 @@ import {
 } from "@mantine/core"
 import { useEffect, useState } from "react"
 import type { JSX } from "react"
-
 import { useStorage } from "@plasmohq/storage/hook"
-
-import type { LLMConfig } from "~lib/models/llm"
+import type { LLMConfigType } from "~lib/models/llm"
 import { defaultConfig } from "~lib/models/llm"
+import { LLM_CONFIG_KEY } from "~lib/storage"
 import { isValidLocalUrl } from "~lib/text"
 
 export default function LLMOptionsComponent(): JSX.Element {
-  const [config, setConfig] = useStorage<LLMConfig>("llm_config", defaultConfig)
-  const [localState, setLocalState] = useState<LLMConfig>(config)
+  const [config, setConfig] = useStorage<LLMConfigType>(
+    LLM_CONFIG_KEY,
+    defaultConfig
+  )
+  const [localState, setLocalState] = useState<LLMConfigType>(config)
   const [submitted, setSubmitted] = useState<{
-    [K in keyof LLMConfig]?: boolean
+    [K in keyof LLMConfigType]?: boolean
   }>({})
-  const [error, setError] = useState<{ [K in keyof LLMConfig]?: string }>({})
+  const [error, setError] = useState<{ [K in keyof LLMConfigType]?: string }>(
+    {}
+  )
 
   useEffect(() => {
     setLocalState(config)
   }, [config])
 
-  const handleChange = (key: keyof LLMConfig, value: string):void => {
-    setLocalState((prev: LLMConfig) => ({ ...prev, [key]: value }))
-    setError((prev: { [K in keyof LLMConfig]?: string }) => ({ ...prev, [key]: undefined })) // clear error on edit
+  const handleChange = (key: keyof LLMConfigType, value: string): void => {
+    setLocalState((prev: LLMConfigType) => ({ ...prev, [key]: value }))
+    setError((prev: { [K in keyof LLMConfigType]?: string }) => ({
+      ...prev,
+      [key]: undefined
+    })) // clear error on edit
   }
 
-  const handleSubmit = (key: keyof LLMConfig):void => {
+  const handleSubmit = (key: keyof LLMConfigType): void => {
     // For localLLMUrl, check format
     if (key === "localLLMUrl") {
       if (
         localState.localLLMUrl.trim() !== "" &&
         !isValidLocalUrl(localState.localLLMUrl.trim())
       ) {
-        setError((prev: LLMConfig) => ({
+        setError((prev: LLMConfigType) => ({
           ...prev,
           localLLMUrl: "Please enter a valid localhost or 127.0.0.1 URL."
         }))
         return
       }
     }
-    setConfig((prev: LLMConfig) => ({
+    setConfig((prev: LLMConfigType) => ({
       ...prev,
       [key]: localState[key]
     }))
-    setSubmitted((prev: { [K in keyof LLMConfig]?: boolean }) => ({ ...prev, [key]: true }))
+    setSubmitted((prev: { [K in keyof LLMConfigType]?: boolean }) => ({
+      ...prev,
+      [key]: true
+    }))
     setTimeout(() => {
-      setSubmitted((prev: { [K in keyof LLMConfig]?: boolean }) => ({ ...prev, [key]: false }))
+      setSubmitted((prev: { [K in keyof LLMConfigType]?: boolean }) => ({
+        ...prev,
+        [key]: false
+      }))
     }, 2000)
   }
 

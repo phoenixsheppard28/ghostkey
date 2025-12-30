@@ -1,10 +1,10 @@
-export type LLMConfig = {
+export type LLMConfigType = {
     localLLMUrl: string
     openAIKey: string
     claudeKey: string
   }
   
-export const defaultConfig: LLMConfig = {
+export const defaultConfig: LLMConfigType = {
     localLLMUrl: "",
     openAIKey: "",
     claudeKey: ""

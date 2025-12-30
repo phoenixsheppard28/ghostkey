@@ -4,6 +4,7 @@ import { createRoot } from "react-dom/client"
 import { GRAPE_MANTINE_THEME, } from "~styles/MantineStyles"
 import InlinePopup from "~components/InlinePopup"
 import { ActivePopup } from "~lib/actives/activePopup"
+import { getEditableContent, setEditableContent } from "~lib/editableUtils"
 import { sendToBackground, type PlasmoMessaging } from "@plasmohq/messaging"
 
 export function openInlinePopup(activeEditable: HTMLElement): void {
@@ -42,11 +43,19 @@ export function openInlinePopup(activeEditable: HTMLElement): void {
 
   const handleSubmit = async (value: string): Promise<void> => {
     console.log("Submitted:", value)
-    // TODO: Hook up to LLM here
+
+    const currentContent = getEditableContent(activeEditable)
     const resp: PlasmoMessaging.Response = await sendToBackground({
-      name: "queryLLM"
+      name: "queryLLM",
+      body: { prompt: value, currentContent: currentContent, model: "llama3" }
     })
     console.log(resp)
+
+    if (typeof resp === "string") {
+      setEditableContent(activeEditable, resp)
+    } else {
+      console.error("LLM error:", resp)
+    }
   }
 
   root.render(

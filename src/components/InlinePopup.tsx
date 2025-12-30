@@ -1,4 +1,4 @@
-import { ActionIcon, Box, Group, Popover, TextInput } from "@mantine/core"
+import { ActionIcon, Group, Paper, TextInput } from "@mantine/core"
 import type { JSX } from "react"
 import { useEffect, useRef, useState } from "react"
 import { FiX } from "react-icons/fi"
@@ -46,56 +46,46 @@ export default function InlinePopup({
   }
 
   return (
-    <Popover
-      opened={true}
-      onClose={onClose}
-      position="bottom-start"
+    <Paper
       shadow="md"
-      withinPortal={false}>
-      <Popover.Target>
-        <Box style={{ width: 1, height: 1 }} />
-      </Popover.Target>
-      <Popover.Dropdown
-        onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
-        onMouseDown={(e: React.MouseEvent<HTMLDivElement>) =>
-          e.stopPropagation()
+      p="sm"
+      radius="md"
+      onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
+      onMouseDown={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
+      onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
+        if (e.key === "Escape") {
+          onClose()
         }
-        onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {``
-          // handler inside the actual element
-          if (e.key === "Escape") {
-            onClose()
-          }
-          e.stopPropagation()
-        }}>
-        <form onSubmit={handleSubmit} style={{ minWidth: 280, maxWidth: 400 }}>
-          <Group align="flex-start">
-            <TextInput
-              ref={inputRef}
-              placeholder="Describe your changes..."
-              value={value}
-              onChange={handleInputChange}
-              onFocus={() => {
-                shouldReclaimFocusRef.current = true
-              }} // this and onBlur fix youtube focus stealing
-              // however it doesnent let u lcick off
-              onBlur={(): void => {
-                if (shouldReclaimFocusRef.current) {
-                  setTimeout(() => inputRef.current?.focus(), 0)
-                }
-                shouldReclaimFocusRef.current = false
-              }}
-              style={{ flex: 1 }}
-            />
-            <ActionIcon
-              onClick={onClose}
-              aria-label="Close popup"
-              size="lg"
-              variant="subtle">
-              <FiX size={18} />
-            </ActionIcon>
-          </Group>
-        </form>
-      </Popover.Dropdown>
-    </Popover>
+        e.stopPropagation()
+      }}
+    >
+      <form onSubmit={handleSubmit}>
+        <Group align="flex-start" wrap="nowrap">
+          <TextInput
+            ref={inputRef}
+            placeholder="Describe your changes..."
+            value={value}
+            onChange={handleInputChange}
+            onFocus={() => {
+              shouldReclaimFocusRef.current = true
+            }}
+            onBlur={(): void => {
+              if (shouldReclaimFocusRef.current) {
+                setTimeout(() => inputRef.current?.focus(), 0)
+              }
+              shouldReclaimFocusRef.current = false
+            }}
+            style={{ flex: 1 }}
+          />
+          <ActionIcon
+            onClick={onClose}
+            aria-label="Close popup"
+            size="lg"
+            variant="subtle">
+            <FiX size={18} />
+          </ActionIcon>
+        </Group>
+      </form>
+    </Paper>
   )
 }
