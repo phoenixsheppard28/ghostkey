@@ -1,10 +1,27 @@
-import { Ollama } from "ollama"
+import type { ChatRequest, ChatResponse, Message } from "ollama"
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 import { LLMConfig } from "~lib/storage"
 
+const SYSTEM_PROMPT =
+  "You are an AI assistant that modifies and generates text. When given existing text with an instruction, apply the requested changes and return only the modified text. When given just an instruction, generate the requested text. Do not include explanations or markdown formatting unless specifically requested."
+
+async function chat(host: string, request: ChatRequest): Promise<ChatResponse> {
+  const response = await fetch(`${host}/api/chat`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ...request, stream: false })
+  })
+
+  if (!response.ok) {
+    throw new Error(`Ollama API error: ${response.status} ${response.statusText}`)
+  }
+
+  return response.json() as Promise<ChatResponse>
+}
+
 const handler: PlasmoMessaging.MessageHandler = async (
   req: PlasmoMessaging.Request,
-  res: PlasmoMessaging.Response,
+  res: PlasmoMessaging.Response
 ) => {
   try {
     const { prompt, currentContent, model } = req.body as {
@@ -13,37 +30,19 @@ const handler: PlasmoMessaging.MessageHandler = async (
       model: string
     }
 
-    const ollama = new Ollama({ host: await LLMConfig.get_local_url() })
-    const userMessage = currentContent
+    const host = await LLMConfig.get_local_url()
+    const userContent = currentContent
       ? `Current text:\n${currentContent}\n\nInstruction: ${prompt}`
       : prompt
 
-    const response = await ollama.chat({
-      model: model,
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are an AI assistant that modifies and generates text. When given existing text with an instruction, apply the requested changes and return only the modified text. When given just an instruction, generate the requested text. Do not include explanations or markdown formatting unless specifically requested."
-        },
-        {
-          role: "user",
-          content: userMessage
-        }
-      ]
-    })
+    const messages: Message[] = [
+      { role: "system", content: SYSTEM_PROMPT },
+      { role: "user", content: userContent }
+    ]
 
-    // The response from ollama.chat is expected to have a .message.content
-    if (
-      response &&
-      response.message &&
-      typeof response.message.content === "string"
-    ) {
-      res.send(response.message.content)
-    } else {
-      console.error(response)
-      res.send({ error: `LLM API error: Unexpected response structure` })
-    }
+    const response = await chat(host, { model, messages })
+
+    res.send(response.message.content)
   } catch (e) {
     res.send({ error: e instanceof Error ? e.message : "Unknown error" })
   }

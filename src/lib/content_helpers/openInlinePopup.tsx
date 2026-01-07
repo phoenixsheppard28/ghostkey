@@ -41,7 +41,8 @@ export function openInlinePopup(activeEditable: HTMLElement): void {
     ActivePopup.set(null)
   }
 
-  const handleSubmit = async (value: string): Promise<void> => {
+  const handleSubmit = async (value: string): Promise<{success: boolean}> => {
+    try {
     console.log("Submitted:", value)
 
     const currentContent = getEditableContent(activeEditable)
@@ -53,9 +54,16 @@ export function openInlinePopup(activeEditable: HTMLElement): void {
 
     if (typeof resp === "string") {
       setEditableContent(activeEditable, resp)
+      return {success: true}
     } else {
       console.error("LLM error:", resp)
+      return {success: false}
     }
+  }
+  catch (error) {
+    console.error("Error submitting prompt to LLM:", error)
+    return {success: false}
+  }
   }
 
   root.render(

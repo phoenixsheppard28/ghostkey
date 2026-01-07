@@ -1,16 +1,44 @@
-import { ActionIcon, Group, Paper, TextInput } from "@mantine/core"
+import { ActionIcon, Group, Paper, TextInput, Text } from "@mantine/core"
 import type { JSX } from "react"
 import { useEffect, useRef, useState } from "react"
 import { FiX } from "react-icons/fi"
+
+function LoadingDots(): JSX.Element {
+  return (
+    <span style={{ display: "inline-flex", gap: 2 }}>
+      {[0, 1, 2].map((i: number) => (
+        <span
+          key={i}
+          style={{
+            width: 4,
+            height: 4,
+            borderRadius: "50%",
+            backgroundColor: "currentColor",
+            animation: "pulse 1.4s infinite",
+            animationDelay: `${i * 0.2}s`
+          }}
+        />
+      ))}
+      <style>{`
+        @keyframes pulse {
+          0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+          40% { opacity: 1; transform: scale(1); }
+        }
+      `}</style>
+    </span>
+  )
+}
 
 export default function InlinePopup({
   onClose,
   onSubmit
 }: {
   onClose: () => void
-  onSubmit: (value: string) => void
+  onSubmit: (value: string) => Promise<{success: boolean}>
 }): JSX.Element {
   const [value, setValue] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const shouldReclaimFocusRef = useRef(false)
 
@@ -37,11 +65,19 @@ export default function InlinePopup({
     event: React.ChangeEvent<HTMLInputElement>
   ): void => {
     setValue(event.target.value)
+    setError(null)
   }
 
-  const handleSubmit = (event: React.FormEvent): void => {
+  const handleSubmit = async (event: React.FormEvent): Promise<void> => {
     event.preventDefault()
-    onSubmit(value)
+    setLoading(true)
+    const { success } = await onSubmit(value)
+    setLoading(false)
+    if (!success) {
+      setError("Error submitting prompt to LLM. Please check your local LLM server is running and try again.")
+      // Don't close the popup, allow the user to fix their input
+      return
+    }
     onClose()
   }
 
@@ -66,6 +102,8 @@ export default function InlinePopup({
             placeholder="Describe your changes..."
             value={value}
             onChange={handleInputChange}
+            disabled={loading}
+            rightSection={loading ? <LoadingDots /> : null}
             onFocus={() => {
               shouldReclaimFocusRef.current = true
             }}
@@ -76,6 +114,7 @@ export default function InlinePopup({
               shouldReclaimFocusRef.current = false
             }}
             style={{ flex: 1 }}
+            error={!!error}
           />
           <ActionIcon
             onClick={onClose}
@@ -85,6 +124,11 @@ export default function InlinePopup({
             <FiX size={18} />
           </ActionIcon>
         </Group>
+        {error && (
+          <Text color="red" size="xs" mt={6} style={{ whiteSpace: "pre-line" }}>
+            {error}
+          </Text>
+        )}
       </form>
     </Paper>
   )
