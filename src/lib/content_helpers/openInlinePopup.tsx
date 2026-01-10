@@ -6,6 +6,7 @@ import InlinePopup from "~components/InlinePopup"
 import { ActivePopup } from "~lib/actives/activePopup"
 import { getEditableContent, setEditableContent } from "~lib/editableUtils"
 import { sendToBackground, type PlasmoMessaging } from "@plasmohq/messaging"
+import type { LLMModel } from "~lib/models/llm"
 
 export function openInlinePopup(activeEditable: HTMLElement): void {
 
@@ -41,14 +42,14 @@ export function openInlinePopup(activeEditable: HTMLElement): void {
     ActivePopup.set(null)
   }
 
-  const handleSubmit = async (value: string): Promise<{success: boolean}> => {
+  const handleSubmit = async (value: string, model: LLMModel): Promise<{success: boolean}> => {
     try {
     console.log("Submitted:", value)
-
+  
     const currentContent = getEditableContent(activeEditable)
     const resp: PlasmoMessaging.Response = await sendToBackground({
       name: "queryLLM",
-      body: { prompt: value, currentContent: currentContent, model: "llama3" }
+      body: { prompt: value, currentContent: currentContent, model: model }
     })
     console.log(resp)
 

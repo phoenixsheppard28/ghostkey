@@ -36,16 +36,10 @@ export default function Sidebar(): JSX.Element {
         </a>
       </div>
     <h2>
-      Welcome to your
-      <a href="https://www.plasmo.com" target="_blank">
-        {" "}
-        Plasmo
-      </a>{" "}
-      Extension!
+      Welcome to Ghostkey!
+      <p>This is a tool that lets you use ai on any website</p>
+      <p></p>
     </h2>
-    <a href="https://docs.plasmo.com" target="_blank">
-      View Docs
-    </a>
   </div>
   </MantineProvider>
  )

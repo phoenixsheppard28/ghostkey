@@ -12,6 +12,5 @@ export const LLMConfig = {
     set: async (config: LLMConfigType): Promise<void> => storage.set(LLM_CONFIG_KEY, config),
     get_local_url: async (): Promise<string> => (await LLMConfig.get()).localLLMUrl,
     get_openai_key: async (): Promise<string> => (await LLMConfig.get()).openAIKey,
-    get_claude_key: async (): Promise<string> => (await LLMConfig.get()).claudeKey
 }
 

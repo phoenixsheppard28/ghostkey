@@ -116,25 +116,6 @@ export default function LLMOptionsComponent(): JSX.Element {
             Submitted!
           </Notification>
         )}
-        <Group align="flex-end">
-          <PasswordInput
-            label="Claude API Key"
-            value={localState.claudeKey}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              handleChange("claudeKey", e.target.value)
-            }
-            placeholder="claude-key"
-            autoComplete="off"
-            style={{ flex: 1 }}
-            error={error.claudeKey}
-          />
-          <Button onClick={() => handleSubmit("claudeKey")}>Submit</Button>
-        </Group>
-        {submitted.claudeKey && (
-          <Notification color="green" withCloseButton={false} mt={-15}>
-            Submitted!
-          </Notification>
-        )}
       </Stack>
     </Box>
   )

@@ -29,6 +29,10 @@ const handler: PlasmoMessaging.MessageHandler = async (
       currentContent: string
       model: string
     }
+    const apiKey = await LLMConfig.get_openai_key()
+    if (!apiKey) {
+      throw new Error("OpenAI API key is not set")
+    }
 
     const host = await LLMConfig.get_local_url()
     const userContent = currentContent

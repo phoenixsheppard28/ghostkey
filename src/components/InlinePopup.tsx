@@ -2,6 +2,8 @@ import { ActionIcon, Group, Paper, TextInput, Text } from "@mantine/core"
 import type { JSX } from "react"
 import { useEffect, useRef, useState } from "react"
 import { FiX } from "react-icons/fi"
+import type { LLMModel } from "~lib/models/llm"
+import { models } from "~lib/models/llm"
 
 function LoadingDots(): JSX.Element {
   return (
@@ -34,11 +36,12 @@ export default function InlinePopup({
   onSubmit
 }: {
   onClose: () => void
-  onSubmit: (value: string) => Promise<{success: boolean}>
+  onSubmit: (value: string, model: LLMModel) => Promise<{success: boolean}>
 }): JSX.Element {
   const [value, setValue] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [model, setModel] = useState<LLMModel>(models[0])
   const inputRef = useRef<HTMLInputElement>(null)
   const shouldReclaimFocusRef = useRef(false)
 
@@ -71,7 +74,8 @@ export default function InlinePopup({
   const handleSubmit = async (event: React.FormEvent): Promise<void> => {
     event.preventDefault()
     setLoading(true)
-    const { success } = await onSubmit(value)
+    
+    const { success } = await onSubmit(value, model)
     setLoading(false)
     if (!success) {
       setError("Error submitting prompt to LLM. Please check your local LLM server is running and try again.")
